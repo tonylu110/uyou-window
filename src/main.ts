@@ -16,6 +16,7 @@ const style = `
   width: calc(100% - 20px);
   height: calc(100% - 1rem - 40px);
   background-color: white;
+  overflow: scroll;
 }
 `
 
@@ -43,7 +44,7 @@ class uyouWindow extends HTMLElement {
     this.render()
   }
   render() {
-    const shadow = this.attachShadow({ mode: 'open' })
+    const shadow = this.attachShadow({ mode: 'closed' })
     const styleDom = document.createElement('style')
     styleDom.innerHTML = style
     shadow.innerHTML = `
