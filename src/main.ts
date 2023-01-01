@@ -54,6 +54,7 @@ class uyouWindow extends HTMLElement {
     }
     this.render()
     this.moveWindow()
+    this.windowResize()
   }
   render() {
     this.shadow = this.attachShadow({ mode: 'closed' })
@@ -92,6 +93,72 @@ class uyouWindow extends HTMLElement {
     windowDom?.querySelector('.title-bar')?.addEventListener('mouseup', () => {
       windowDom.querySelector('.title-bar')?.removeEventListener('mousemove', windowMove)
     })
+  }
+  windowResize() {
+    const window = this.shadow?.querySelector('.window') as HTMLElement
+    let resizeable = false
+    let clientX: number, clientY: number
+    let minW = 20, minH = 20
+    let direc = ''
+    const up = () => {
+      resizeable = false
+    }
+    const down = (e: Event) => {
+      let dir = getDirection(e)
+      if (dir !== '') {
+        resizeable = true
+        direc = dir
+        clientX = (e as MouseEvent).clientX
+        clientY = (e as MouseEvent).clientY
+      }
+    }
+    const move = (e: Event) => {
+      let dir = getDirection(e)
+      let cursor
+      dir === '' ? cursor = 'default' : cursor = dir + '-resize'
+      window.style.cursor = cursor
+      if (resizeable) {
+        if (direc.indexOf('e') !== -1) {
+          window.style.width = Math.max(minW, window.offsetWidth + ((e as MouseEvent).clientX - clientX)) + 'px'
+          clientX = (e as MouseEvent).clientX
+        }
+        if (direc.indexOf('n') !== -1) {
+          window.style.height = Math.max(minH, window.offsetHeight + (clientY - (e as MouseEvent).clientY)) + 'px'
+          clientY = (e as MouseEvent).clientY
+        }
+        if (direc.indexOf('s') !== -1) {
+          window.style.height = Math.max(minW, window.offsetHeight + ((e as MouseEvent).clientY - clientY)) + 'px'
+          clientY = (e as MouseEvent).clientY
+        }
+        if (direc.indexOf('w') !== -1) {
+          window.style.width = Math.max(minW, window.offsetWidth + (clientX - (e as MouseEvent).clientX)) + 'px'
+          clientX = (e as MouseEvent).clientX
+        }
+      }
+    }
+    const getDirection = (event: Event): string => {
+      let xP: number, yP: number, offset = 15, dir = ''
+      xP = (event as MouseEvent).offsetX
+      yP = (event as MouseEvent).offsetY
+
+      const body = window.querySelector('.body') as HTMLElement
+
+      if (yP < offset) {
+        dir += 'n'
+      } else if (yP > body.offsetHeight - offset) {
+        dir += 's'
+      }
+      if (xP < offset) {
+        dir += 'w'
+      } else if (xP > window.offsetWidth - offset) {
+        dir += 'e'
+      }
+      return dir
+    }
+
+    window.addEventListener('mousemove', move)
+    window.addEventListener('mousedown', down)
+    window.addEventListener('mouseup', up)
   }
 }
 
