@@ -35,7 +35,8 @@ class uyouWindow extends HTMLElement {
     left: string | null,
     bodyColor: string | null,
     titleShadow: string,
-    windowRadius: string | null
+    windowRadius: string | null,
+    position: string | null
   }
   shadow: ShadowRoot | undefined
   constructor() {
@@ -50,7 +51,8 @@ class uyouWindow extends HTMLElement {
       left: this.getAttribute('x') ? this.getAttribute('x') : '0',
       bodyColor: this.getAttribute('body-color') ? this.getAttribute('body-color') : 'white',
       titleShadow: this.getAttribute('tb-shadow') === 'true' ? '0 2px 10px #00000055' : '0 0 0 transparent',
-      windowRadius: this.getAttribute('win-radius') ? this.getAttribute('win-radius') : '10'
+      windowRadius: this.getAttribute('win-radius') ? this.getAttribute('win-radius') : '10',
+      position: this.getAttribute('pos') ? this.getAttribute('pos') : ''
     }
     this.render()
     this.moveWindow()
@@ -58,12 +60,23 @@ class uyouWindow extends HTMLElement {
   }
   render() {
     this.shadow = this.attachShadow({ mode: 'closed' })
-    const styleDom = document.createElement('style')
-    styleDom.innerHTML = style
+    if (this._data.top?.indexOf('%') === -1) {
+      this._data.top = this._data.top + 'px'
+    }
+    if (this._data.left?.indexOf('%') === -1) {
+      this._data.left = this._data.left + 'px'
+    }
+    let pos = ''
+
+    if (this._data.position === 'center') {
+      this._data.top = '50%'
+      this._data.left = '50%'
+      pos = 'transform: translateX(-50%) translateY(-50%);'
+    }
     this.shadow.innerHTML = `
     <div 
       class="window" 
-      style="width: ${this._data.width}px; height: ${this._data.height}px; top: ${this._data.top}px; left: ${this._data.left}px; border-radius: ${this._data.windowRadius}px;"
+      style="width: ${this._data.width}px; height: ${this._data.height}px; top: ${this._data.top}; left: ${this._data.left}; border-radius: ${this._data.windowRadius}px; ${pos}"
      >
       <div 
         class="title-bar" 
@@ -76,6 +89,8 @@ class uyouWindow extends HTMLElement {
       </div>
     </div>
     `
+    const styleDom = document.createElement('style')
+    styleDom.innerHTML = style
     this.shadow.appendChild(styleDom)
   }
   moveWindow() {

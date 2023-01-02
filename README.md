@@ -29,14 +29,15 @@ It's like
 
 These props means
 ```
-title // title bar text
-tb-color // title bar color
-tt-color // title bar text color
-width // window width
-height // window height
-y // window position on the y
-x // window position on the x
-body-color // body color
-tb-shadow // title bar shadow show or hide
-win-radius // window round radius
+title // title bar text // default: title
+tb-color // title bar color // default: bule
+tt-color // title bar text color // default: white
+width // window width // default: 400
+height // window height // default: 300
+y // window position on the y // default: 0 if have pos cannot use
+x // window position on the x // default: o if have pos cannot use
+body-color // body color // default: white
+tb-shadow // title bar shadow show or hide // default: false
+win-radius // window round radius // default: 10
+pos // set window position // default: default set the prop do not use x or y
 ```
