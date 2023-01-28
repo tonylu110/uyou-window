@@ -94,11 +94,25 @@ class uyouWindow extends HTMLElement {
     this.shadow.appendChild(styleDom)
   }
   moveWindow() {
+    let inTitleBar = false
+
     const windowDom = this.shadow?.querySelector('.window')
+
+    windowDom?.querySelector('.title-bar')?.addEventListener('mouseover', () => {
+      windowDom?.querySelector('.title-bar')?.addEventListener('mousedown', () => {
+        inTitleBar = true
+      })
+    })
+    windowDom?.querySelector('.title-bar')?.addEventListener('mouseout', () => {
+      inTitleBar = false
+    })
+
     let x: number, y: number
     const windowMove = (e: Event) => {
-      (windowDom as HTMLElement).style.top = (e as MouseEvent).clientY - y + 'px';
-      (windowDom as HTMLElement).style.left = (e as MouseEvent).clientX - x + 'px';
+      if (inTitleBar) {
+        (windowDom as HTMLElement).style.top = (e as MouseEvent).clientY - y + 'px';
+        (windowDom as HTMLElement).style.left = (e as MouseEvent).clientX - x + 'px';
+      }
     }
     windowDom?.querySelector('.title-bar')?.addEventListener('mousedown', (e) => {
       x = (e as MouseEvent).offsetX
@@ -147,6 +161,7 @@ class uyouWindow extends HTMLElement {
         }
         if (direc.indexOf('w') !== -1) {
           window.style.width = Math.max(minW, window.offsetWidth + (clientX - (e as MouseEvent).clientX)) + 'px'
+          window.style.left = (e as MouseEvent).clientX - 14 + 'px'
           clientX = (e as MouseEvent).clientX
         }
       }
@@ -158,7 +173,7 @@ class uyouWindow extends HTMLElement {
 
       const body = window.querySelector('.body') as HTMLElement
 
-      if (yP < offset) {
+      if (yP < 7) {
         dir += 'n'
       } else if (yP > body.offsetHeight - offset) {
         dir += 's'
